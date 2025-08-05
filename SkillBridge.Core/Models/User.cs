@@ -3,16 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace SkillBridge.Core.Models
 {
     public class User
     {
         public int Id { get; set; }
+        
+        [Required]
         public string Name { get; set; } = "";
+        
+        [Required, EmailAddress]
         public string Email { get; set; } = "";
-        public string PasswordHash { get; set; } = "";
-        public string PasswordSalt { get; set; } = "";
+        
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
+        
         public string Bio { get; set; } = "";
 
         public ICollection<Skill> SkillsOffered { get; set; } = new List<Skill>();

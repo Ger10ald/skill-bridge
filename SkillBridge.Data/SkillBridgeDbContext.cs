@@ -19,13 +19,19 @@ namespace SkillBridge.Data
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Message> Messages => Set<Message>();
+        public DbSet<UserSkill> UserSkills => Set<UserSkill>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Unique constraint on Email
             modelBuilder.Entity<User>()
-                .HasMany(u => u.SkillsOffered)
-                .WithOne(s => s.User)
-                .HasForeignKey(s => s.UserId);
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            // Unique constraint on Username
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.SkillRequests)
@@ -62,9 +68,15 @@ namespace SkillBridge.Data
                 .HasForeignKey(s => s.CategoryId);
 
             modelBuilder.Entity<SkillRequest>()
-                .HasOne(sr => sr.Skill)
-                .WithMany(s => s.MatchedRequests)
-                .HasForeignKey(sr => sr.SkillId);
+                .Property(us => us.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<UserSkill>()
+                .HasKey(us => new { us.UserId, us.SkillId });
+
+            modelBuilder.Entity<UserSkill>()
+                .Property(us => us.ProficiencyLevel)
+                .HasConversion<string>(); // Store as readable string in DB
         }
     }
 }

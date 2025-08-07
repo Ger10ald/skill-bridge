@@ -70,6 +70,9 @@ namespace SkillBridge.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Rating")
                         .HasColumnType("INTEGER");
 
@@ -97,22 +100,13 @@ namespace SkillBridge.Data.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Skills");
                 });
@@ -123,7 +117,7 @@ namespace SkillBridge.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("RequestedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("RequesterId")
@@ -155,12 +149,17 @@ namespace SkillBridge.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("PasswordHash")
@@ -171,9 +170,49 @@ namespace SkillBridge.Data.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SkillBridge.Core.Models.UserSkill", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsOffering")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProficiencyLevel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "SkillId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("UserSkills");
                 });
 
             modelBuilder.Entity("SkillBridge.Core.Models.Message", b =>
@@ -220,15 +259,7 @@ namespace SkillBridge.Data.Migrations
                         .WithMany("Skills")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("SkillBridge.Core.Models.User", "User")
-                        .WithMany("SkillsOffered")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SkillBridge.Core.Models.SkillRequest", b =>
@@ -240,7 +271,7 @@ namespace SkillBridge.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("SkillBridge.Core.Models.Skill", "Skill")
-                        .WithMany("MatchedRequests")
+                        .WithMany()
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -250,6 +281,25 @@ namespace SkillBridge.Data.Migrations
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("SkillBridge.Core.Models.UserSkill", b =>
+                {
+                    b.HasOne("SkillBridge.Core.Models.Skill", "Skill")
+                        .WithMany("UserSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SkillBridge.Core.Models.User", "User")
+                        .WithMany("UserSkills")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SkillBridge.Core.Models.Category", b =>
                 {
                     b.Navigation("Skills");
@@ -257,7 +307,7 @@ namespace SkillBridge.Data.Migrations
 
             modelBuilder.Entity("SkillBridge.Core.Models.Skill", b =>
                 {
-                    b.Navigation("MatchedRequests");
+                    b.Navigation("UserSkills");
                 });
 
             modelBuilder.Entity("SkillBridge.Core.Models.User", b =>
@@ -272,7 +322,7 @@ namespace SkillBridge.Data.Migrations
 
                     b.Navigation("SkillRequests");
 
-                    b.Navigation("SkillsOffered");
+                    b.Navigation("UserSkills");
                 });
 #pragma warning restore 612, 618
         }

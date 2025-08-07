@@ -33,7 +33,6 @@ namespace SkillBridge.API.Controllers
 
             var user = new User
             {
-                Name = request.Name,
                 Email = request.Email,
                 PasswordSalt = hmac.Key,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password)),
@@ -57,7 +56,6 @@ namespace SkillBridge.API.Controllers
                 return Unauthorized("Invalid credentials.");
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
-
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
 
             for (int i = 0; i < computedHash.Length; i++)

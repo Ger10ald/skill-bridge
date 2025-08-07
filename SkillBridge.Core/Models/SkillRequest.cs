@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkillBridge.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,13 +10,14 @@ namespace SkillBridge.Core.Models
     public class SkillRequest
     {
         public int Id { get; set; }
+
         public int RequesterId { get; set; }
-        public int SkillId {  get; set; }
-
-        public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
-        public string Status { get; set; } = "Pending";
-
         public User? Requester { get; set; }
+
+        public int SkillId {  get; set; }
         public Skill? Skill { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Status Status { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace SkillBridge.API.Controllers
             if (existingUser == null)
                 return NotFound();
             
-            existingUser.Name = updatedUser.Name;
+            
             existingUser.Email = updatedUser.Email;
             existingUser.Bio = updatedUser.Bio;
 

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SkillBridge.Data;
 using SkillBridge.Core.Models;
-using SkillBridge.Core.Dtos;
+using SkillBridge.Application.Dtos;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;

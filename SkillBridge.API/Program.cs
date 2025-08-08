@@ -4,6 +4,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using SkillBridge.Data;
+using SkillBridge.Application.Interfaces;
+using SkillBridge.Infrastructure.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,8 @@ builder.Services.AddSwaggerGen(options =>
 // Wire up DbContext
 builder.Services.AddDbContext<SkillBridgeDbContext>(options =>
     options.UseSqlite("Data Source=skillbridge.db"));
+
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 var app = builder.Build();
 

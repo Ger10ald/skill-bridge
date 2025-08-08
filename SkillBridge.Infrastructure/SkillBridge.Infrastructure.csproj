@@ -5,6 +5,12 @@
     <ProjectReference Include="..\SkillBridge.Application\SkillBridge.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Email\" />
+    <Folder Include="FileStorage\" />
+    <Folder Include="GeoLocation\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

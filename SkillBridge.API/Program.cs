@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SkillBridge.Data;
 using SkillBridge.Application.Interfaces;
 using SkillBridge.Infrastructure.Email;
+using SkillBridge.Notifications.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ builder.Services.AddDbContext<SkillBridgeDbContext>(options =>
     options.UseSqlite("Data Source=skillbridge.db"));
 
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -50,6 +53,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapHub<NotificationHub>("/hub/notifications");
 
 app.Run();

@@ -23,6 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SkillBridge.Application\SkillBridge.Application.csproj" />
     <ProjectReference Include="..\SkillBridge.Data\SkillBridge.Data.csproj" />
+    <ProjectReference Include="..\SkillBridge.Infrastructure\SkillBridge.Infrastructure.csproj" />
+    <ProjectReference Include="..\SkillBridge.Notifications\SkillBridge.Notifications.csproj" />
   </ItemGroup>
 
 </Project>

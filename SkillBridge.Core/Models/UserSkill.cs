@@ -11,16 +11,14 @@ namespace SkillBridge.Core.Models
     public class UserSkill
     {
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public int SkillId { get; set; }
-        public Skill Skill { get; set; }
+        public Skill Skill { get; set; } = null!;
 
-        [Required]
+        [Required, MaxLength(500)]
         public string Description { get; set; } = string.Empty;
-        [Required]
         public ProficiencyLevel ProficiencyLevel { get; set; }
-        [Required]
         public bool IsOffering { get; set; }
     }
 }

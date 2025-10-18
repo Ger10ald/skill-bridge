@@ -11,25 +11,36 @@ namespace SkillBridge.Core.Models
     {
         public int Id { get; set; }
         
-        [Required]
-        public string UserName { get; set; } = string.Empty;
+        private string _userName = string.Empty;
+        [Required, MaxLength(80)]  
+        public string UserName 
+        { 
+            get => _userName; 
+            set => _userName = (value ?? string.Empty).Trim(); 
+        }
         
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+
+        private string _email = string.Empty;
+        [Required, EmailAddress, MaxLength(254)]  
+        public string Email 
+        { 
+            get => _email; 
+            set => _email = (value ?? string.Empty).Trim().ToLowerInvariant(); 
+        }
 
         [Required]
-        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
         [Required]
-        public byte[] PasswordSalt { get; set; }
-        
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
 
+        [MaxLength(700)]
         public string Bio { get; set; } = string.Empty;
+        [MaxLength(40)]
         public string Role {  get; set; } = "User";
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
         public ICollection<SkillRequest> SkillRequests { get; set; } = new List<SkillRequest>();

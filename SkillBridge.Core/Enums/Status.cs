@@ -8,8 +8,12 @@ namespace SkillBridge.Core.Enums
 {
     public enum Status
     {
-        Pending,
-        Accepted,
-        Rejected
+        Requested = 0,
+        PendingHold = 1,
+        Accepted = 2,
+        Captured = 3,
+        Declined = 4,
+        Expired = 5,
+        Canceled = 6
     }
 }

@@ -46,12 +46,15 @@ namespace SkillBridge.Data.Configurations
             b.Property(x => x.ExpiredAt);
 
             // Optimistic concurrency
-            b.Property(x => x.RowVersion).IsRowVersion();
+            b.Property(x => x.RowVersion)
+              .IsConcurrencyToken()
+              .ValueGeneratedNever()      
+              .IsRequired();
 
             b.HasOne(x => x.Requester)
              .WithMany()
              .HasForeignKey(x => x.RequesterId)
-             .OnDelete(DeleteBehavior.Restrict);   // keep history if a user is removed
+             .OnDelete(DeleteBehavior.Restrict);   
 
             b.HasOne(x => x.Skill)
              .WithMany()
@@ -60,7 +63,7 @@ namespace SkillBridge.Data.Configurations
 
             b.HasIndex(x => x.RequesterId);
             b.HasIndex(x => x.SkillId);
-            b.HasIndex(x => new { x.Status, x.StartUtc }); // dashboards: upcoming by status
+            b.HasIndex(x => new { x.Status, x.StartUtc }); 
             b.HasIndex(x => x.CreatedAt);
 
             b.HasIndex(r => new {r.RequesterId, r.Status });

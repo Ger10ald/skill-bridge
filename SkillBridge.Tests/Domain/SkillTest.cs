@@ -4,7 +4,7 @@ using System;
 using SkillBridge.Core.Models;
 using Xunit;
 
-namespace SkillBridge.Tests;
+namespace SkillBridge.Tests.Domain;
 
 
 public class SkillTest

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;               
+using System.Linq;          
+using Microsoft.EntityFrameworkCore;
 using SkillBridge.Core.Models;
 
 namespace SkillBridge.Data
@@ -20,6 +22,30 @@ namespace SkillBridge.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(SkillBridgeDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
+        }
+
+        public override int SaveChanges()
+        {
+            StampConcurrencyTokens();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            StampConcurrencyTokens();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void StampConcurrencyTokens()
+        {
+            // Any unique-changing value works; Guid bytes are simple and small
+            var entries = ChangeTracker.Entries<SkillRequest>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            foreach (var e in entries)
+            {
+                e.Property(x => x.RowVersion).CurrentValue = Guid.NewGuid().ToByteArray();
+            }
         }
     }
 }

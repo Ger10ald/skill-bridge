@@ -10,6 +10,15 @@ namespace SkillBridge.Core.Models
 {
     public class SkillRequest
     {
+        private readonly TimeProvider _time;
+
+        private SkillRequest() : this(TimeProvider.System) { }
+
+        public SkillRequest(TimeProvider? time = null)
+        {
+            _time = time ?? TimeProvider.System;
+        }
+        
         public int Id { get; set; }
 
         public int RequesterId { get; set; }
@@ -74,7 +83,7 @@ namespace SkillBridge.Core.Models
                 throw new ArgumentException("HoldUntil must be UTC.");
             if (Status != Status.Requested)
                 throw new InvalidOperationException("Only Requested can move to PendingHold.");
-            if (holdUntilUtc <= DateTime.UtcNow)
+            if (holdUntilUtc <=  _time.GetUtcNow().UtcDateTime)
                 throw new ArgumentException("HoldUntil must be in the future.");
 
             Status = Status.PendingHold;
@@ -89,18 +98,18 @@ namespace SkillBridge.Core.Models
                 throw new InvalidOperationException("Cannot accept an expired request.");
 
             Status = Status.Accepted;
-            AcceptedAt = DateTime.UtcNow;
+            AcceptedAt = _time.GetUtcNow().UtcDateTime;
         }
 
         public void Capture()
         {
             if (Status != Status.Accepted)
                 throw new InvalidOperationException("Capture requires Accepted status.");
-            if (DateTime.UtcNow < EndUtc)
+            if (_time.GetUtcNow().UtcDateTime < EndUtc) // Change to ActualEndUtc to capture at the end of the actual session
                 // This would capture the funds right after the service has been provided
                 throw new InvalidOperationException("Cannot capture before end of session");
             Status = Status.Captured;
-            CapturedAt = DateTime.UtcNow;
+            CapturedAt = _time.GetUtcNow().UtcDateTime;
         }
 
         public void Decline()
@@ -110,7 +119,7 @@ namespace SkillBridge.Core.Models
             if (Status == Status.Declined)
                 return; // idempotent
             Status = Status.Declined;
-            DeclinedAt = DateTime.UtcNow;
+            DeclinedAt = _time.GetUtcNow().UtcDateTime;
         }
 
         public void CancelByRequester()
@@ -118,7 +127,7 @@ namespace SkillBridge.Core.Models
             if (Status is Status.Captured or Status.Declined or Status.Expired)
                 throw new InvalidOperationException("Cannot cancel after completion/decline/expiry.");
             Status = Status.Canceled;
-            CanceledAt = DateTime.UtcNow;
+            CanceledAt = _time.GetUtcNow().UtcDateTime;
         }
 
         public void ExpireIfPastHold()
@@ -129,14 +138,15 @@ namespace SkillBridge.Core.Models
             if (IsExpiredByTime())
             {
                 Status = Status.Expired;
-                ExpiredAt = DateTime.UtcNow;
+                ExpiredAt = _time.GetUtcNow().UtcDateTime;
             }
         }
 
         private bool IsExpiredByTime()
         {
-            if (HoldUntil.HasValue && DateTime.UtcNow > HoldUntil.Value) return true;
-            if (DateTime.UtcNow > EndUtc) return true; // optional: also expire when session window passed
+            var now = _time.GetUtcNow().UtcDateTime;
+            if (HoldUntil.HasValue && now > HoldUntil.Value) return true;
+            if (now > EndUtc) return true; // expire when session window passed
             return false;
         }
     }

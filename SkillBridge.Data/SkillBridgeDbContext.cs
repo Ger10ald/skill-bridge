@@ -17,6 +17,7 @@ namespace SkillBridge.Data
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Message> Messages => Set<Message>();
         public DbSet<UserSkill> UserSkills => Set<UserSkill>();
+        public DbSet<PasswordCredential> PasswordCredentials => Set<PasswordCredential>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

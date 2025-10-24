@@ -22,18 +22,21 @@ namespace SkillBridge.Core.Models
         public string Algorithm {  get; private set; }
         public int Version { get; private set; } // Version for updates
         
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; private set; } 
+        public DateTime UpdatedAt { get; private set; } 
         public DateTime? LastVerifiedAt { get; private set; } // Soft-disable
-
         public bool IsRevoked {  get; private set; }
 
         private PasswordCredential() { }
 
-        public PasswordCredential(int userId)
+        public PasswordCredential(int userId, TimeProvider? time=null)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userId);
             UserId = userId;
+
+            var now = (time ?? TimeProvider.System).GetUtcNow().UtcDateTime;
+            CreatedAt = now;
+            UpdatedAt = now;
         }
 
         public void SetMaterial(byte[] hash, byte [] salt, int iterations, string algorithm, int version, TimeProvider? time = null)

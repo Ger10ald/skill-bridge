@@ -23,7 +23,7 @@ namespace SkillBridge.Data
 
          
             var conn = config.GetConnectionString("Default")
-                       ?? "Data Source=skillbridge-dev.db";   
+                       ?? "Data Source=skillbridge.db";   
 
             var options = new DbContextOptionsBuilder<SkillBridgeDbContext>()
                 .UseSqlite(conn)                         

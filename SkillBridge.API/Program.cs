@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SkillBridge.Application.Interfaces;
 using SkillBridge.Application.Services;
@@ -8,6 +9,7 @@ using SkillBridge.Data;
 using SkillBridge.Infrastructure.Email;
 using SkillBridge.Infrastructure.Security;
 using SkillBridge.Notifications.Hubs;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -67,6 +69,7 @@ var jwtOpt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o =>
     {
+        o.MapInboundClaims = false;
         o.TokenValidationParameters = new()
         {
             ValidIssuer = jwtOpt.Issuer,
@@ -76,7 +79,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(jwtOpt.ClockSkewMinutes)
+            ClockSkew = TimeSpan.FromMinutes(jwtOpt.ClockSkewMinutes),
+            NameClaimType = JwtRegisteredClaimNames.UniqueName,
+            RoleClaimType = ClaimTypes.Role
         };
     });
 builder.Services.AddAuthorization();
